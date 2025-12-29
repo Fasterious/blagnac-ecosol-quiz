@@ -206,7 +206,7 @@ export default function Home() {
           <div className="w-16 h-16 rounded-full bg-white text-red-500 shadow-lg flex items-center justify-center text-2xl group-active:scale-90 transition transform hover:bg-red-50">
             <X size={32} />
           </div>
-          <span className="text-white text-sm font-medium opacity-80">Pas d'accord</span>
+          <span className="text-white text-sm font-medium opacity-80">Pas d&apos;accord</span>
         </button>
 
         <button 
@@ -226,7 +226,7 @@ export default function Home() {
           <div className="w-16 h-16 rounded-full bg-white text-green-600 shadow-lg flex items-center justify-center text-2xl group-active:scale-90 transition transform hover:bg-green-50">
             <Check size={32} />
           </div>
-          <span className="text-white text-sm font-medium opacity-80">D'accord</span>
+          <span className="text-white text-sm font-medium opacity-80">D&apos;accord</span>
         </button>
       </div>
 
