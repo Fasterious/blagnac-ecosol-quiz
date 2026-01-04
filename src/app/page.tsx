@@ -154,13 +154,14 @@ export default function Home() {
               Découvrez si vous matchez avec notre programme pour une ville plus démocratique, écologique et solidaire.
             </p>
 
-            <button 
-              onClick={startQuiz}
+            <motion.button 
+              onTap={startQuiz}
               className="group relative px-8 py-4 bg-white text-emerald-800 rounded-full font-bold text-lg shadow-lg hover:bg-emerald-50 hover:scale-105 transition-all flex items-center gap-2"
+              whileTap={{ scale: 0.95 }}
             >
               Faire le quiz
               <ChevronRight className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </motion.button>
             
             <p className="mt-8 text-xs text-emerald-200/60">
               18 questions • ~3 minutes
@@ -200,27 +201,30 @@ export default function Home() {
 
             {/* Manual Controls */}
             <div className="h-28 shrink-0 px-8 pb-4 flex items-center justify-center gap-6 z-50">
-               <button 
-                onClick={() => handleAnswer('left')}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-orange-500 hover:bg-orange-50 hover:scale-110 transition-all active:scale-95"
+               <motion.button 
+                onTap={() => handleAnswer('left')}
+                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-orange-500 hover:bg-orange-50 hover:scale-110 transition-all"
                 aria-label="Pas d'accord"
+                whileTap={{ scale: 0.9 }}
                >
                  <X size={28} strokeWidth={3} />
-               </button>
-               <button 
-                onClick={() => handleAnswer('up')}
-                className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 hover:scale-110 transition-all active:scale-95"
+               </motion.button>
+               <motion.button 
+                onTap={() => handleAnswer('up')}
+                className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 hover:scale-110 transition-all"
                 aria-label="Neutre"
+                whileTap={{ scale: 0.9 }}
                >
                  <Meh size={20} />
-               </button>
-               <button 
-                onClick={() => handleAnswer('right')}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-green-500 hover:bg-green-50 hover:scale-110 transition-all active:scale-95"
+               </motion.button>
+               <motion.button 
+                onTap={() => handleAnswer('right')}
+                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-green-500 hover:bg-green-50 hover:scale-110 transition-all"
                 aria-label="D'accord"
+                whileTap={{ scale: 0.9 }}
                >
                  <Heart size={28} strokeWidth={3} fill="currentColor" className="text-green-500" />
-               </button>
+               </motion.button>
             </div>
           </>
         )}

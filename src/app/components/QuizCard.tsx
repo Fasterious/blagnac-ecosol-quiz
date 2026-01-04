@@ -16,18 +16,24 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onSwipe, index }) => {
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   
-  // Opacity for overlay indicators
-  const opacityRight = useTransform(x, [50, 150], [0, 1]);
-  const opacityLeft = useTransform(x, [-50, -150], [0, 1]);
-  const opacityUp = useTransform(y, [-50, -150], [0, 1]);
+  // Opacity for overlay indicators - apparaissent dès 20px au lieu de 50px
+  const opacityRight = useTransform(x, [20, 100], [0, 1]);
+  const opacityLeft = useTransform(x, [-20, -100], [0, 1]);
+  const opacityUp = useTransform(y, [-20, -100], [0, 1]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const swipeThreshold = 100;
-    if (info.offset.x > swipeThreshold) {
+    const swipeThreshold = 40; // Réduit de 100px à 40px
+    const velocityThreshold = 500; // Seuil de vitesse pour valider même avec distance courte
+    
+    // Calcul de la vitesse globale
+    const velocity = Math.sqrt(info.velocity.x ** 2 + info.velocity.y ** 2);
+    
+    // Détection basée sur la distance OU la vitesse (flick)
+    if (info.offset.x > swipeThreshold || (info.offset.x > 20 && Math.abs(info.velocity.x) > velocityThreshold && info.velocity.x > 0)) {
       onSwipe('right');
-    } else if (info.offset.x < -swipeThreshold) {
+    } else if (info.offset.x < -swipeThreshold || (info.offset.x < -20 && Math.abs(info.velocity.x) > velocityThreshold && info.velocity.x < 0)) {
       onSwipe('left');
-    } else if (info.offset.y < -swipeThreshold) {
+    } else if (info.offset.y < -swipeThreshold || (info.offset.y < -20 && Math.abs(info.velocity.y) > velocityThreshold && info.velocity.y < 0)) {
       onSwipe('up');
     }
   };
