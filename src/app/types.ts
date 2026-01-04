@@ -11,6 +11,7 @@ export interface QuizState {
   score: number;
   answers: AnswerRecord[];
   emailCaptured: boolean;
+  sessionId?: number | null;
 }
 
 export interface AnswerRecord {

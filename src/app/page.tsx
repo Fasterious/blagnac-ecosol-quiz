@@ -7,6 +7,8 @@ import QuizCard from "./components/QuizCard";
 import Results from "./components/Results";
 import { questions, TOTAL_QUESTIONS } from "./constants";
 import { QuizState, AnswerRecord } from "./types";
+import { supabase } from "../lib/supabase";
+import { getIpAddress } from "../lib/utils";
 
 export default function Home() {
   const [gameState, setGameState] = useState<QuizState>({
@@ -20,8 +22,34 @@ export default function Home() {
   const currentQuestion = questions[gameState.currentQuestionIndex];
   const progress = ((gameState.currentQuestionIndex) / TOTAL_QUESTIONS) * 100;
 
-  const startQuiz = () => {
+  const startQuiz = async () => {
+    // Mise à jour de l'UI
     setGameState(prev => ({ ...prev, screen: 'quiz' }));
+
+    // Initialisation de la session Supabase
+    try {
+      const ip = await getIpAddress();
+      
+      const { data, error } = await supabase
+        .from('quiz_results')
+        .insert([{ 
+          device_info: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+          ip_address: ip,
+          score: 0,
+          // On initialise les réponses vides, elles seront remplies au fur et à mesure via les colonnes q1..q18
+        }])
+        .select()
+        .single();
+
+      if (data) {
+        console.log('Nouvelle session créée, ID:', data.id);
+        setGameState(prev => ({ ...prev, sessionId: data.id }));
+      } else if (error) {
+        console.error('Erreur création session Supabase:', error);
+      }
+    } catch (err) {
+      console.error('Erreur critique Supabase:', err);
+    }
   };
 
   const handleAnswer = (direction: 'left' | 'right' | 'up') => {
@@ -42,6 +70,7 @@ export default function Home() {
     const newScore = gameState.score + points;
     const nextIndex = gameState.currentQuestionIndex + 1;
     const isFinished = nextIndex >= TOTAL_QUESTIONS;
+    const newAnswersList = [...gameState.answers, { questionId: currentQuestion.id, value: points, choice }];
 
     // Small delay to allow swipe animation to finish visually before state update
     setTimeout(() => {
@@ -50,8 +79,30 @@ export default function Home() {
         score: newScore,
         currentQuestionIndex: isFinished ? prev.currentQuestionIndex : nextIndex,
         screen: isFinished ? 'results' : 'quiz',
-        answers: [...prev.answers, { questionId: currentQuestion.id, value: points, choice }]
+        answers: newAnswersList
       }));
+
+      // --- SAUVEGARDE PROGRESSIVE EN BASE ---
+      if (gameState.sessionId) {
+        // On construit le nom de la colonne dynamiquement : q1, q2, q3...
+        const columnKey = `q${currentQuestion.id}`;
+        
+        // On prépare l'objet de mise à jour
+        const updatePayload: any = {
+          [columnKey]: choice, 
+          score: Math.round((newScore / TOTAL_QUESTIONS) * 100), 
+          answers: newAnswersList 
+        };
+
+        supabase
+          .from('quiz_results')
+          .update(updatePayload)
+          .eq('id', gameState.sessionId)
+          .then(({ error }) => {
+            if (error) console.error(`Erreur sauvegarde ${columnKey}:`, JSON.stringify(error));
+            else console.log(`Sauvegarde OK: ${columnKey} = ${choice}`);
+          });
+      }
     }, 200);
   };
 
@@ -62,6 +113,7 @@ export default function Home() {
       score: 0,
       answers: [],
       emailCaptured: false,
+      sessionId: null,
     });
   };
 
@@ -175,7 +227,12 @@ export default function Home() {
 
         {/* Results Screen */}
         {gameState.screen === 'results' && (
-          <Results score={gameState.score} onRestart={restartQuiz} />
+          <Results 
+            score={gameState.score} 
+            onRestart={restartQuiz}
+            sessionId={gameState.sessionId}
+            answers={gameState.answers}
+          />
         )}
         
       </div>

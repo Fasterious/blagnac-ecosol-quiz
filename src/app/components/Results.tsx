@@ -5,18 +5,33 @@ import { motion } from 'framer-motion';
 import { Share2, RefreshCw, Send, CheckCircle, ExternalLink } from 'lucide-react';
 import { TOTAL_QUESTIONS } from '../constants';
 import confetti from 'canvas-confetti';
+import { supabase } from '../../lib/supabase';
+import { AnswerRecord } from '../types';
 
 interface ResultsProps {
   score: number;
   onRestart: () => void;
+  sessionId?: number | null;
+  answers: AnswerRecord[];
 }
 
-const Results: React.FC<ResultsProps> = ({ score, onRestart }) => {
+const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers }) => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
+
+  // Safety sync: On s'assure que le score final est bien enregistré
+  useEffect(() => {
+    if (sessionId) {
+      supabase
+        .from('quiz_results')
+        .update({ score: percentage, answers: answers })
+        .eq('id', sessionId)
+        .then(() => console.log('Sync final terminé'));
+    }
+  }, [sessionId, percentage, answers]);
   
   // Determine profile
   let resultType: 'match' | 'good' | 'divergent';
@@ -87,11 +102,41 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart }) => {
     }
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && email.includes('@')) {
-      console.log('Email collected:', email);
       setIsSubmitted(true);
+      
+      // Cas 1 : On a une session active, on met à jour la ligne existante
+      if (sessionId) {
+        try {
+          const { error } = await supabase
+            .from('quiz_results')
+            .update({ email: email })
+            .eq('id', sessionId);
+          
+          if (error) console.error("Erreur update email:", error);
+          else console.log("Email associé au résultat !");
+        } catch (err) {
+          console.error("Erreur update:", err);
+        }
+      } 
+      // Cas 2 (Fallback) : Pas de session (ex: coupure réseau au démarrage), on crée une nouvelle ligne
+      else {
+        try {
+          await supabase.from('quiz_results').insert([
+            { 
+              score: percentage,
+              answers: answers,
+              email: email,
+              device_info: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
+            }
+          ]);
+          console.log("Email enregistré avec nouvelle ligne (fallback)");
+        } catch(err) { 
+          console.error("Erreur fallback insert:", err);
+        }
+      }
     }
   };
 
