@@ -44,7 +44,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
     match: {
       color: '#16a34a', // green-600
       title: "C'est un Match ! 💚",
-      message: "Vous êtes totalement en phase avec le programme EcoSol. Blagnac a besoin de vous !",
+      message: "Vous êtes totalement en phase avec le programme EcoSol.",
       bg: 'bg-green-50',
       text: 'text-green-600',
       border: 'border-green-200'
@@ -52,7 +52,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
     good: {
       color: '#2563eb', // blue-600
       title: "On est sur la bonne voie ! 🤔",
-      message: "Vous partagez l'essentiel de nos valeurs pour un Blagnac plus vert et solidaire.",
+      message: "Vous partagez l'essentiel de nos valeurs pour Blagnac.",
       bg: 'bg-blue-50',
       text: 'text-blue-600',
       border: 'border-blue-200'
