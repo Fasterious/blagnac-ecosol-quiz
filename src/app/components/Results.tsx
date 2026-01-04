@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Share2, RefreshCw, Send, CheckCircle, ExternalLink } from 'lucide-react';
-import { TOTAL_QUESTIONS } from '../constants';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Share2, RefreshCw, Send, CheckCircle, ExternalLink, ChevronDown, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
+import { TOTAL_QUESTIONS, questions } from '../constants';
 import confetti from 'canvas-confetti';
 import { supabase } from '../../lib/supabase';
 import { AnswerRecord } from '../types';
@@ -19,6 +19,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
 
@@ -140,6 +141,14 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
     }
   };
 
+  const getAnswerDetails = (choice: string) => {
+    switch (choice) {
+      case 'agree': return { label: "D'accord", color: 'text-green-600', bg: 'bg-green-100', icon: <ThumbsUp size={14} /> };
+      case 'disagree': return { label: "Pas d'accord", color: 'text-orange-500', bg: 'bg-orange-100', icon: <ThumbsDown size={14} /> };
+      default: return { label: "Neutre", color: 'text-blue-500', bg: 'bg-blue-100', icon: <Minus size={14} /> };
+    }
+  };
+
   // SVG Configuration for the Gauge
   const size = 160;
   const strokeWidth = 14;
@@ -154,10 +163,10 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
       animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center w-full max-w-md mx-auto p-6"
     >
-      <div className="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl w-full overflow-hidden p-8 flex flex-col items-center">
+      <div className="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl w-full overflow-hidden p-8 flex flex-col items-center max-h-[85vh] overflow-y-auto">
         
         {/* Modern Circular Gauge */}
-        <div className="relative w-40 h-40 mb-6 flex items-center justify-center">
+        <div className="relative w-40 h-40 mb-6 flex items-center justify-center shrink-0">
           <svg
             height={size}
             width={size}
@@ -210,7 +219,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
           </div>
         </div>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 shrink-0">
           <h2 className="text-2xl font-black text-gray-800 mb-2 tracking-tight">{activeConfig.title}</h2>
           <p className="text-gray-600 leading-relaxed font-medium">
             {activeConfig.message}
@@ -219,7 +228,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
 
         {/* Email Capture - Compact */}
         {!isSubmitted ? (
-          <form onSubmit={handleEmailSubmit} className="w-full mb-6">
+          <form onSubmit={handleEmailSubmit} className="w-full mb-6 shrink-0">
             <div className="relative flex items-center">
               <input 
                 type="email" 
@@ -244,7 +253,7 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
           <motion.div 
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`w-full mb-8 p-3 ${activeConfig.bg} ${activeConfig.text} rounded-xl flex items-center justify-center gap-2 text-sm font-bold`}
+            className={`w-full mb-8 p-3 ${activeConfig.bg} ${activeConfig.text} rounded-xl flex items-center justify-center gap-2 text-sm font-bold shrink-0`}
           >
             <CheckCircle size={18} />
             <span>Bien reçu !</span>
@@ -252,10 +261,10 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 w-full">
+        <div className="grid grid-cols-2 gap-3 w-full shrink-0">
            <button 
             onClick={handleShare}
-            className={`flex items-center justify-center gap-2 px-4 py-3.5 ${activeConfig.bg} ${activeConfig.text} border ${activeConfig.border} rounded-xl font-bold hover:brightness-95 transition-all`}
+            className={`flex items-center justify-center gap-2 px-4 py-3.5 ${activeConfig.bg} ${activeConfig.text} border ${activeConfig.border} rounded-xl font-bold hover:brightness-95 transition-all text-sm`}
           >
             {copied ? <CheckCircle size={18} /> : <Share2 size={18} />}
             {copied ? 'Copié !' : 'Partager'}
@@ -264,16 +273,58 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
             href="https://blagnac-ecosol-2026.fr/" 
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-100 text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-200 transition-all"
+            className="flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-100 text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-200 transition-all text-sm"
           >
             <ExternalLink size={18} />
             Programme
           </a>
         </div>
 
+        {/* DETAILS SECTION - ACCORDION */}
+        <div className="w-full mt-6 shrink-0">
+          <button 
+            onClick={() => setShowDetails(!showDetails)}
+            className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200 text-gray-700 font-bold text-sm hover:bg-gray-100 transition-colors"
+          >
+            <span>Voir mes réponses ({answers.length})</span>
+            <ChevronDown size={18} className={`transition-transform duration-300 ${showDetails ? 'rotate-180' : ''}`} />
+          </button>
+
+          <AnimatePresence>
+            {showDetails && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="pt-2 pb-1 space-y-2">
+                  {questions.map((q) => {
+                    const userAnswer = answers.find(a => a.questionId === q.id);
+                    if (!userAnswer) return null;
+                    const style = getAnswerDetails(userAnswer.choice);
+                    
+                    return (
+                      <div key={q.id} className="bg-white border border-gray-100 rounded-lg p-3 text-left shadow-sm">
+                        <p className="text-xs text-gray-500 font-semibold mb-1 uppercase tracking-wider">{q.theme}</p>
+                        <p className="text-sm text-gray-800 font-medium leading-snug mb-2">{q.text}</p>
+                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold ${style.bg} ${style.color}`}>
+                          {style.icon}
+                          <span>{style.label}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         <button 
           onClick={onRestart}
-          className="mt-6 text-gray-400 hover:text-gray-600 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+          className="mt-8 text-gray-400 hover:text-gray-600 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 pb-2"
         >
           <RefreshCw size={12} /> Recommencer
         </button>
