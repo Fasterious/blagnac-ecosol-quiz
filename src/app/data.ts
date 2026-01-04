@@ -7,19 +7,19 @@ export const questions: Question[] = [
   {
     id: 1,
     theme: "Démocratie",
-    text: "Je trouve normal que les habitants décident eux-mêmes de l'utilisation d'une partie du budget de la ville.",
+    text: "Je souhaite que les habitants puissent décider directement de certains investissements via un Budget Participatif.",
     details: "EcoSol propose des Budgets Participatifs où les citoyens décident des investissements."
   },
   {
     id: 2,
     theme: "Démocratie",
-    text: "Si 10% des Blagnacais le demandent, la mairie doit organiser un référendum pour nous laisser trancher.",
+    text: "Si 10% des électeurs le demandent, la mairie doit organiser un Référendum d'Initiative Citoyenne (RIC) local.",
     details: "Nous instaurerons le RIC (Référendum d'Initiative Citoyenne) local dès 10% d'inscrits."
   },
   {
     id: 3,
     theme: "Démocratie",
-    text: "Les élus ne devraient pas décider seuls : je veux que des assemblées de citoyens soient consultées avant les grands projets.",
+    text: "Les élus ne devraient pas décider seuls : je veux une Assemblée Citoyenne tirée au sort pour co-construire les décisions.",
     details: "Création d'une Assemblée Citoyenne tirée au sort pour co-construire les décisions."
   },
   // --- ÉCOLOGIE ---
@@ -32,7 +32,7 @@ export const questions: Question[] = [
   {
     id: 5,
     theme: "Écologie",
-    text: "L'eau est un bien vital : sa gestion doit redevenir publique pour faire baisser la facture et garantir sa qualité.",
+    text: "L'eau est un bien vital : sa gestion doit redevenir publique pour faire baisser la facture et garantir la gratuité des premiers m³.",
     details: "Passage de l'eau en régie publique et gratuité des premiers m³ vitaux."
   },
   {
@@ -45,7 +45,7 @@ export const questions: Question[] = [
   {
     id: 7,
     theme: "Social",
-    text: "Je veux que mes enfants mangent 100% bio et local à la cantine, sans augmentation de prix.",
+    text: "Je veux que mes enfants mangent 100% bio et local à la cantine, sans surcoût pour les familles modestes.",
     details: "Cantines 100% bio et locales, accessibles à tous sans surcoût pour les modestes."
   },
   {
@@ -57,14 +57,14 @@ export const questions: Question[] = [
   {
     id: 9,
     theme: "Social",
-    text: "La ville doit organiser des transports solidaires pour aider les personnes âgées ou sans permis.",
+    text: "La ville doit organiser des transports solidaires pour aider les personnes âgées, les personnes handicapées ou sans permis.",
     details: "Mise en place d'une solution de mobilité solidaire avec des bénévoles."
   },
   // --- URBANISME ---
   {
     id: 10,
     theme: "Urbanisme",
-    text: "On construit trop vite : il faut limiter le nombre de nouveaux logements pour garder une ville humaine.",
+    text: "On construit trop vite : il faut limiter le nombre de nouveaux logements pour garder une ville à taille humaine.",
     details: "Limitation stricte à 300 nouveaux logements par an."
   },
   {
@@ -76,14 +76,14 @@ export const questions: Question[] = [
   {
     id: 12,
     theme: "Urbanisme",
-    text: "J'aimerais une aide financière de la mairie pour isoler mon logement et réduire ma facture.",
+    text: "Je suis favorable à une aide financière de la mairie pour isoler mon logement et réduire ma facture.",
     details: "Création d'une aide municipale à la rénovation thermique en complément des aides d'État."
   },
   // --- SÉCURITÉ ---
   {
     id: 13,
     theme: "Sécurité",
-    text: "Le soir, je préfère voir des policiers et des médiateurs humains sur le terrain plutôt que juste des caméras.",
+    text: "Le soir et le week-end, je préfère voir des policiers et des médiateurs humains sur le terrain plutôt que juste des caméras.",
     details: "Priorité à la présence humaine : Police Municipale en soirée et médiateurs de quartier."
   },
   {
@@ -95,26 +95,26 @@ export const questions: Question[] = [
   {
     id: 15,
     theme: "Sécurité",
-    text: "La ville doit garantir que chaque enfant apprenne à nager avant son entrée au collège.",
+    text: "La ville doit garantir que chaque enfant apprenne à nager avant son entrée au collège (Soutien au plan Savoir Nager)",
     details: "Soutien total au plan 'Savoir Nager' pour la sécurité des enfants."
   },
   // --- MOBILITÉ ---
   {
     id: 16,
     theme: "Mobilité",
-    text: "Je veux que les rues devant les écoles soient fermées aux voitures aux heures d'entrée/sortie.",
+    text: "Je souhaite la création de 'Rues aux écoles' piétonnisées aux heures d'entrée et de sortie.",
     details: "Création de 'Rues aux écoles' sécurisées et piétonnisées aux heures de pointe."
   },
   {
     id: 17,
     theme: "Mobilité",
-    text: "Je prendrais plus mon vélo si les pistes étaient continues et vraiment séparées des voitures.",
+    text: "Je prendrais mon vélo si le réseau était continu, sécurisé et irriguait toute la commune.",
     details: "Plan Vélo ambitieux : réseau continu et sécurisé (pistes séparées)."
   },
   {
     id: 18,
     theme: "Mobilité",
-    text: "Il faut augmenter la fréquence des bus et trams pour que je puisse laisser ma voiture.",
+    text: "Il faut renforcer les fréquences bus/tram et transformer le T2 en navette express.",
     details: "Renforcement des fréquences bus/tram et transformation du T2 en navette express."
   },
 ];
