@@ -11,6 +11,19 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: white;
+  /* Prevent pull-to-refresh on mobile for better swipe experience */
+  overscroll-behavior-y: contain;
+  /* Smooth scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent text selection during drag */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 

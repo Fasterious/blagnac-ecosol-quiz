@@ -1,11 +1,6 @@
 // src/app/data.ts
 
-export type Question = {
-  id: number;
-  theme: string;
-  text: string;
-  details: string; // L'explication du programme EcoSol
-};
+import { Question } from './types';
 
 export const questions: Question[] = [
   // --- DÉMOCRATIE ---
