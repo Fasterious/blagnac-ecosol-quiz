@@ -1,69 +1,27 @@
 "use client";
 
-import { motion, PanInfo, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Question } from '../types';
 import { THEME_COLORS } from '../constants';
 
 interface QuizCardProps {
   question: Question;
-  onSwipe: (direction: 'left' | 'right' | 'up') => void;
   index: number;
 }
 
-const QuizCard: React.FC<QuizCardProps> = ({ question, onSwipe, index }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-15, 15]);
-  
-  // Opacity for overlay indicators - apparaissent dès 20px au lieu de 50px
-  const opacityRight = useTransform(x, [20, 100], [0, 1]);
-  const opacityLeft = useTransform(x, [-20, -100], [0, 1]);
-  const opacityUp = useTransform(y, [-20, -100], [0, 1]);
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const swipeThreshold = 40; // Réduit de 100px à 40px
-    const velocityThreshold = 500; // Seuil de vitesse pour valider même avec distance courte
-    
-    // Calcul de la vitesse globale
-    const velocity = Math.sqrt(info.velocity.x ** 2 + info.velocity.y ** 2);
-    
-    // Détection basée sur la distance OU la vitesse (flick)
-    if (info.offset.x > swipeThreshold || (info.offset.x > 20 && Math.abs(info.velocity.x) > velocityThreshold && info.velocity.x > 0)) {
-      onSwipe('right');
-    } else if (info.offset.x < -swipeThreshold || (info.offset.x < -20 && Math.abs(info.velocity.x) > velocityThreshold && info.velocity.x < 0)) {
-      onSwipe('left');
-    } else if (info.offset.y < -swipeThreshold || (info.offset.y < -20 && Math.abs(info.velocity.y) > velocityThreshold && info.velocity.y < 0)) {
-      onSwipe('up');
-    }
-  };
-
+const QuizCard: React.FC<QuizCardProps> = ({ question, index }) => {
   const themeStyle = THEME_COLORS[question.theme] || 'bg-gray-100 text-gray-800';
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center p-4 cursor-grab active:cursor-grabbing"
-      style={{ x, y, rotate, zIndex: 50 - index }}
-      drag
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      onDragEnd={handleDragEnd}
+      className="absolute inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 50 - index }}
       initial={{ scale: 0.9, opacity: 0, y: 20 }}
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.2 } }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
     >
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-full max-h-[500px] flex flex-col pointer-events-auto select-none">
-        
-        {/* Swipe Overlays */}
-        <motion.div style={{ opacity: opacityRight }} className="absolute top-8 left-8 z-20 border-4 border-green-500 rounded-lg px-4 py-2 transform -rotate-12">
-          <span className="text-3xl font-black text-green-500 uppercase tracking-widest">D&apos;ACCORD</span>
-        </motion.div>
-        <motion.div style={{ opacity: opacityLeft }} className="absolute top-8 right-8 z-20 border-4 border-orange-500 rounded-lg px-4 py-2 transform rotate-12">
-          <span className="text-3xl font-black text-orange-500 uppercase tracking-widest">PAS D&apos;ACCORD</span>
-        </motion.div>
-        <motion.div style={{ opacity: opacityUp }} className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 border-4 border-blue-500 rounded-lg px-4 py-2">
-          <span className="text-2xl font-black text-blue-500 uppercase tracking-widest">NEUTRE</span>
-        </motion.div>
-
         {/* Content */}
         <div className="flex-1 flex flex-col p-8 items-center justify-center text-center relative z-10">
           {/* Badge du Thème */}
@@ -71,7 +29,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onSwipe, index }) => {
             {question.theme}
           </div>
           
-          {/* Question Principale (Seul élément restant) */}
+          {/* Question Principale */}
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight select-none">
             {question.text}
           </h2>

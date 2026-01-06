@@ -193,7 +193,6 @@ export default function Home() {
                 <QuizCard 
                   key={currentQuestion.id} 
                   question={currentQuestion} 
-                  onSwipe={handleAnswer} 
                   index={gameState.currentQuestionIndex}
                 />
               </AnimatePresence>
