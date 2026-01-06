@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Heart, X, Meh } from "lucide-react";
+import { ChevronRight, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 import QuizCard from "./components/QuizCard";
 import Results from "./components/Results";
 import { questions, TOTAL_QUESTIONS } from "./constants";
@@ -199,32 +199,39 @@ export default function Home() {
               </AnimatePresence>
             </div>
 
-            {/* Manual Controls */}
-            <div className="h-28 shrink-0 px-8 pb-4 flex items-center justify-center gap-6 z-50">
-               <motion.button 
-                onTap={() => handleAnswer('left')}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-orange-500 hover:bg-orange-50 hover:scale-110 transition-all"
-                aria-label="Pas d'accord"
-                whileTap={{ scale: 0.9 }}
-               >
-                 <X size={28} strokeWidth={3} />
-               </motion.button>
-               <motion.button 
+            {/* Manual Controls - Tag Style Buttons */}
+            <div className="w-full shrink-0 px-6 pb-8 pt-4 flex flex-col gap-3 z-50">
+              <div className="grid grid-cols-2 gap-3">
+                <motion.button 
+                  onTap={() => handleAnswer('left')}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex flex-col items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-orange-100 text-orange-600 border border-orange-200 shadow-sm hover:bg-orange-200 transition-colors"
+                  aria-label="Pas d'accord"
+                >
+                  <ThumbsDown size={24} />
+                  <span className="font-bold text-sm uppercase tracking-wide">Pas d&apos;accord</span>
+                </motion.button>
+
+                <motion.button 
+                  onTap={() => handleAnswer('right')}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex flex-col items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-green-100 text-green-600 border border-green-200 shadow-sm hover:bg-green-200 transition-colors"
+                  aria-label="D'accord"
+                >
+                  <ThumbsUp size={24} />
+                  <span className="font-bold text-sm uppercase tracking-wide">D&apos;accord</span>
+                </motion.button>
+              </div>
+
+              <motion.button 
                 onTap={() => handleAnswer('up')}
-                className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 hover:scale-110 transition-all"
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-100 text-blue-600 border border-blue-200 hover:bg-blue-200 transition-colors"
                 aria-label="Neutre"
-                whileTap={{ scale: 0.9 }}
-               >
-                 <Meh size={20} />
-               </motion.button>
-               <motion.button 
-                onTap={() => handleAnswer('right')}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-green-500 hover:bg-green-50 hover:scale-110 transition-all"
-                aria-label="D'accord"
-                whileTap={{ scale: 0.9 }}
-               >
-                 <Heart size={28} strokeWidth={3} fill="currentColor" className="text-green-500" />
-               </motion.button>
+              >
+                <Minus size={18} />
+                <span className="font-bold text-sm">Neutre / Je ne sais pas</span>
+              </motion.button>
             </div>
           </>
         )}
