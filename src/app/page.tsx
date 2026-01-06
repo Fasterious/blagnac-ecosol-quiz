@@ -38,7 +38,7 @@ export default function Home() {
           score: 0,
           // On initialise les réponses vides, elles seront remplies au fur et à mesure via les colonnes q1..q18
         }])
-        .select()
+        .select('id')
         .single();
 
       if (data) {
