@@ -164,7 +164,7 @@ export default function Home() {
             </motion.button>
             
             <p className="mt-8 text-xs text-emerald-200/60">
-              18 questions • ~3 minutes
+              14 questions • ~2 minutes
             </p>
           </motion.div>
         )}
