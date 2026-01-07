@@ -10,7 +10,7 @@ import { QuizState, AnswerRecord } from "./types";
 import { supabase } from "../lib/supabase";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   const [gameState, setGameState] = useState<QuizState>({
     screen: 'intro',
     currentQuestionIndex: 0,
@@ -39,8 +39,8 @@ export default function Home() {
       } catch (err) {
         console.error("Erreur init auth:", err);
       } finally {
-        // Une fois qu'on a essayé de connecter (ou qu'il l'est déjà), on arrête le chargement
-        setLoading(false);
+        // Une fois qu'on a essayé de connecter (ou qu'il l'est déjà), on réactive le bouton
+        setAuthLoading(false);
       }
     };
 
@@ -163,18 +163,6 @@ export default function Home() {
     });
   };
 
-  // ÉCRAN DE CHARGEMENT
-  if (loading) {
-    return (
-      <div className="h-[100dvh] bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center font-sans text-white">
-         <div className="animate-pulse flex flex-col items-center">
-           <span className="text-4xl mb-4">🗳️</span>
-           <p className="font-bold text-lg tracking-wide">Chargement...</p>
-         </div>
-      </div>
-    );
-  }
-
   return (
     <div className="h-[100dvh] bg-gradient-to-br from-emerald-600 to-teal-800 flex flex-col items-center justify-center overflow-hidden font-sans text-gray-900">
       
@@ -214,10 +202,24 @@ export default function Home() {
 
             <button 
               onClick={startQuiz}
-              className="group relative px-8 py-4 bg-white text-emerald-800 rounded-full font-bold text-lg shadow-lg hover:bg-emerald-50 hover:scale-105 transition-all flex items-center gap-2"
+              disabled={authLoading}
+              className={`group relative px-8 py-4 rounded-full font-bold text-lg shadow-lg transition-all flex items-center gap-2 ${
+                authLoading 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-emerald-800 hover:bg-emerald-50 hover:scale-105'
+              }`}
             >
-              Faire le quiz
-              <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+              {authLoading ? (
+                <>
+                  <span className="animate-spin inline-block w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full mr-2"></span>
+                  Chargement...
+                </>
+              ) : (
+                <>
+                  Faire le quiz
+                  <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
             
             <p className="mt-8 text-xs text-emerald-200/60">
