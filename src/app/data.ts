@@ -26,8 +26,8 @@ export const questions: Question[] = [
   {
     id: 4,
     theme: "Écologie",
-    text: "Il faut arrêter de bétonner les dernières terres agricoles (Andromède 3) pour construire des immeubles.",
-    details: "EcoSol s'engage au Zéro Artificialisation Nette et à l'arrêt du projet Andromède 3."
+    text: "Il faut stopper le bétonnage et les projets de grande tour sur Andromède 3.",
+    details: "EcoSol s'engage au Zéro Artificialisation Nette et à l'arrêt des projets de tours sur Andromède 3."
   },
   {
     id: 5,
@@ -54,69 +54,43 @@ export const questions: Question[] = [
     text: "Il manque un vrai lieu de convivialité dans mon quartier pour se rencontrer et s'entraider.",
     details: "Création de 'Maisons Communes' dans les quartiers pour le lien social et les services."
   },
-  {
-    id: 9,
-    theme: "Social",
-    text: "La ville doit organiser des transports solidaires pour aider les personnes âgées, les personnes handicapées ou sans permis.",
-    details: "Mise en place d'une solution de mobilité solidaire avec des bénévoles."
-  },
   // --- URBANISME ---
   {
-    id: 10,
-    theme: "Urbanisme",
-    text: "On construit trop vite : il faut limiter le nombre de nouveaux logements pour garder une ville à taille humaine.",
-    details: "Limitation stricte à 300 nouveaux logements par an."
-  },
-  {
-    id: 11,
+    id: 9,
     theme: "Urbanisme",
     text: "Se loger est impossible : la mairie doit proposer des logements à prix cassés (Bail Réel Solidaire).",
     details: "Développement du Bail Réel Solidaire (foncier dissocié du bâti) pour l'accession abordable."
   },
   {
-    id: 12,
+    id: 10,
     theme: "Urbanisme",
     text: "Je suis favorable à une aide financière de la mairie pour isoler mon logement et réduire ma facture.",
     details: "Création d'une aide municipale à la rénovation thermique en complément des aides d'État."
   },
   // --- SÉCURITÉ ---
   {
-    id: 13,
+    id: 11,
     theme: "Sécurité",
     text: "Le soir et le week-end, je préfère voir des policiers et des médiateurs humains sur le terrain plutôt que juste des caméras.",
     details: "Priorité à la présence humaine : Police Municipale en soirée et médiateurs de quartier."
   },
   {
-    id: 14,
+    id: 12,
     theme: "Sécurité",
-    text: "La mairie doit créer un lieu discret pour accueillir en urgence les victimes de violences familiales.",
+    text: "La mairie doit répondre en urgence aux victimes des violences familiales et les mettre à l'abri.",
     details: "Création d'un accueil spécifique pour les victimes de violences et réseau de 'lieux sûrs'."
-  },
-  {
-    id: 15,
-    theme: "Sécurité",
-    text: "La ville doit garantir que chaque enfant apprenne à nager avant son entrée au collège (Soutien au plan Savoir Nager)",
-    details: "Soutien total au plan 'Savoir Nager' pour la sécurité des enfants."
   },
   // --- MOBILITÉ ---
   {
-    id: 16,
-    theme: "Mobilité",
-    text: "Je souhaite la création de 'Rues aux écoles' piétonnisées aux heures d'entrée et de sortie.",
-    details: "Création de 'Rues aux écoles' sécurisées et piétonnisées aux heures de pointe."
-  },
-  {
-    id: 17,
+    id: 13,
     theme: "Mobilité",
     text: "Je prendrais mon vélo si le réseau était continu, sécurisé et irriguait toute la commune.",
     details: "Plan Vélo ambitieux : réseau continu et sécurisé (pistes séparées)."
   },
   {
-    id: 18,
+    id: 14,
     theme: "Mobilité",
-    text: "Il faut renforcer les fréquences bus/tram et transformer le T2 en navette express.",
-    details: "Renforcement des fréquences bus/tram et transformation du T2 en navette express."
-  },
+    text: "Il faut renforcer les fréquences des bus et des trams.",
+    details: "Renforcement des fréquences bus/tram pour une meilleure offre de transports en commun."
+  }
 ];
-
-
