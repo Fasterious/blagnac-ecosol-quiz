@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 import QuizCard from "./components/QuizCard";
@@ -8,65 +8,25 @@ import Results from "./components/Results";
 import { questions, TOTAL_QUESTIONS } from "./constants";
 import { QuizState, AnswerRecord } from "./types";
 import { supabase } from "../lib/supabase";
+import { getIpAddress } from "../lib/utils";
 
 export default function Home() {
-  const [authLoading, setAuthLoading] = useState(true);
   const [gameState, setGameState] = useState<QuizState>({
     screen: 'intro',
     currentQuestionIndex: 0,
     score: 0,
     answers: [],
     emailCaptured: false,
-    sessionId: null,
   });
-
-  // --- SÉCURITÉ : Authentification Anonyme au chargement ---
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        // Vérifie si l'utilisateur a déjà une session active
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session) {
-          // Pas de session ? On le connecte en anonyme
-          const { error } = await supabase.auth.signInAnonymously();
-          if (error) {
-            console.error('Erreur de connexion anonyme:', error);
-          } else {
-            console.log("Authentification anonyme réussie");
-          }
-        }
-      } catch (err) {
-        console.error("Erreur init auth:", err);
-      } finally {
-        // Une fois qu'on a essayé de connecter (ou qu'il l'est déjà), on réactive le bouton
-        setAuthLoading(false);
-      }
-    };
-
-    initAuth();
-  }, []);
 
   const currentQuestion = questions[gameState.currentQuestionIndex];
   const progress = ((gameState.currentQuestionIndex) / TOTAL_QUESTIONS) * 100;
 
-  // Fonction pour récupérer l'IP (Service externe car JS client ne peut pas la lire seul)
-  const getIpAddress = async (): Promise<string | null> => {
-    try {
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      return data.ip;
-    } catch (e) {
-      console.warn("Impossible de récupérer l'IP", e);
-      return null;
-    }
-  };
-
   const startQuiz = async () => {
-    // 1. Update UI immédiatement pour la fluidité
+    // Mise à jour de l'UI
     setGameState(prev => ({ ...prev, screen: 'quiz' }));
 
-    // 2. Création de la ligne en base (L'auth est déjà gérée par le useEffect)
+    // Initialisation de la session Supabase
     try {
       const ip = await getIpAddress();
       
@@ -76,19 +36,16 @@ export default function Home() {
           device_info: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
           ip_address: ip,
           score: 0,
-          // user_id sera automatiquement rempli par Supabase (auth.uid())
+          // On initialise les réponses vides, elles seront remplies au fur et à mesure via les colonnes q1..q18
         }])
         .select('id')
         .single();
 
       if (data) {
-        console.log('Nouvelle session sécurisée créée, ID:', data.id);
+        console.log('Nouvelle session créée, ID:', data.id);
         setGameState(prev => ({ ...prev, sessionId: data.id }));
       } else if (error) {
-        console.error('Erreur init session (Détail):', JSON.stringify(error, null, 2));
-        if (error.code === '42501') {
-          console.warn("⚠️ ERREUR RLS: Vérifiez que l'utilisateur est bien authentifié (même anonymement).");
-        }
+        console.error('Erreur création session Supabase:', error);
       }
     } catch (err) {
       console.error('Erreur critique Supabase:', err);
@@ -113,33 +70,9 @@ export default function Home() {
     const newScore = gameState.score + points;
     const nextIndex = gameState.currentQuestionIndex + 1;
     const isFinished = nextIndex >= TOTAL_QUESTIONS;
-    
-    // Mise à jour de l'état local
-    const newAnswer: AnswerRecord = { questionId: currentQuestion.id, value: points, choice };
-    const newAnswersList = [...gameState.answers, newAnswer];
+    const newAnswersList = [...gameState.answers, { questionId: currentQuestion.id, value: points, choice }];
 
-    // --- SAUVEGARDE PROGRESSIVE EN BASE ---
-    if (gameState.sessionId) {
-      // On construit le nom de la colonne dynamiquement : q1, q2, q3...
-      const columnKey = `q${currentQuestion.id}`;
-      
-      // On prépare l'objet de mise à jour
-      const updatePayload: any = {
-        [columnKey]: choice, 
-        score: Math.round((newScore / TOTAL_QUESTIONS) * 100), 
-        answers: newAnswersList 
-      };
-
-      supabase
-        .from('quiz_results')
-        .update(updatePayload)
-        .eq('id', gameState.sessionId)
-        .then(({ error }) => {
-          if (error) console.error(`Erreur sauvegarde ${columnKey}:`, JSON.stringify(error));
-        });
-    }
-
-    // Update UI avec un petit délai pour l'animation
+    // Small delay to allow swipe animation to finish visually before state update
     setTimeout(() => {
       setGameState(prev => ({
         ...prev,
@@ -148,18 +81,39 @@ export default function Home() {
         screen: isFinished ? 'results' : 'quiz',
         answers: newAnswersList
       }));
-    }, 150);
+
+      // --- SAUVEGARDE PROGRESSIVE EN BASE ---
+      if (gameState.sessionId) {
+        // On construit le nom de la colonne dynamiquement : q1, q2, q3...
+        const columnKey = `q${currentQuestion.id}`;
+        
+        // On prépare l'objet de mise à jour
+        const updatePayload: any = {
+          [columnKey]: choice, 
+          score: Math.round((newScore / TOTAL_QUESTIONS) * 100), 
+          answers: newAnswersList 
+        };
+
+        supabase
+          .from('quiz_results')
+          .update(updatePayload)
+          .eq('id', gameState.sessionId)
+          .then(({ error }) => {
+            if (error) console.error(`Erreur sauvegarde ${columnKey}:`, JSON.stringify(error));
+            else console.log(`Sauvegarde OK: ${columnKey} = ${choice}`);
+          });
+      }
+    }, 200);
   };
 
   const restartQuiz = () => {
-    // En remettant sessionId à null, le prochain "startQuiz" créera forcement une nouvelle ligne
     setGameState({
       screen: 'intro',
       currentQuestionIndex: 0,
       score: 0,
       answers: [],
       emailCaptured: false,
-      sessionId: null, 
+      sessionId: null,
     });
   };
 
@@ -200,27 +154,14 @@ export default function Home() {
               Découvrez si vous matchez avec notre programme pour une ville plus démocratique, écologique et solidaire.
             </p>
 
-            <button 
-              onClick={startQuiz}
-              disabled={authLoading}
-              className={`group relative px-8 py-4 rounded-full font-bold text-lg shadow-lg transition-all flex items-center gap-2 ${
-                authLoading 
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                  : 'bg-white text-emerald-800 hover:bg-emerald-50 hover:scale-105'
-              }`}
+            <motion.button 
+              onTap={startQuiz}
+              className="group relative px-8 py-4 bg-white text-emerald-800 rounded-full font-bold text-lg shadow-lg hover:bg-emerald-50 hover:scale-105 transition-all flex items-center gap-2"
+              whileTap={{ scale: 0.95 }}
             >
-              {authLoading ? (
-                <>
-                  <span className="animate-spin inline-block w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full mr-2"></span>
-                  Chargement...
-                </>
-              ) : (
-                <>
-                  Faire le quiz
-                  <ChevronRight className="group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
+              Faire le quiz
+              <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+            </motion.button>
             
             <p className="mt-8 text-xs text-emerald-200/60">
               14 questions • ~2 minutes
@@ -247,7 +188,7 @@ export default function Home() {
             </div>
 
             {/* Cards Container - Flex 1 to take remaining space */}
-            <div className="flex-1 relative w-full flex items-center justify-center min-h-0 px-4">
+            <div className="flex-1 relative w-full flex items-center justify-center min-h-0">
               <AnimatePresence mode='popLayout'>
                 <QuizCard 
                   key={currentQuestion.id} 
