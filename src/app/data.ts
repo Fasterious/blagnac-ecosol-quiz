@@ -1,5 +1,3 @@
-// src/app/data.ts
-
 import { Question } from './types';
 
 export const questions: Question[] = [
@@ -7,13 +5,13 @@ export const questions: Question[] = [
   {
     id: 1,
     theme: "Démocratie",
-    text: "Je souhaite que les habitants puissent décider directement de certains investissements via un Budget Participatif.",
+    text: "Je veux que les habitants puissent décider directement de certains investissements via un Budget Participatif.",
     details: "EcoSol propose des Budgets Participatifs où les citoyens décident des investissements."
   },
   {
     id: 2,
     theme: "Démocratie",
-    text: "Si 10% des électeurs le demandent, la mairie doit organiser un Référendum d'Initiative Citoyenne (RIC) local.",
+    text: "La mairie doit instaurer un Référendum d'Initiative Citoyenne (RIC) local.",
     details: "Nous instaurerons le RIC (Référendum d'Initiative Citoyenne) local dès 10% d'inscrits."
   },
   {
@@ -77,7 +75,7 @@ export const questions: Question[] = [
   {
     id: 12,
     theme: "Sécurité",
-    text: "La mairie doit répondre en urgence aux victimes des violences familiales et les mettre à l'abri.",
+    text: "La mairie doit répondre en urgence aux victimes des violences intra-familiales et les mettre à l'abri.",
     details: "Création d'un accueil spécifique pour les victimes de violences et réseau de 'lieux sûrs'."
   },
   // --- MOBILITÉ ---
