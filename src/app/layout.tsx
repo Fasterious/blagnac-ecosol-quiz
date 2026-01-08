@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Quiz EcoSol Blagnac 2026",
-  description: "Découvrez votre compatibilité avec le programme EcoSol pour les municipales 2026 à Blagnac via ce mini quiz",
+  description: "Découvrez votre compatibilité avec le programme EcoSol pour les municipales 2026 à Blagnac",
 };
 
 export default function RootLayout({
