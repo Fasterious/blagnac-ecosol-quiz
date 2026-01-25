@@ -16,7 +16,6 @@ export default function Home() {
     currentQuestionIndex: 0,
     score: 0,
     answers: [],
-    emailCaptured: false,
   });
 
   const currentQuestion = questions[gameState.currentQuestionIndex];
@@ -112,7 +111,6 @@ export default function Home() {
       currentQuestionIndex: 0,
       score: 0,
       answers: [],
-      emailCaptured: false,
       sessionId: null,
     });
   };

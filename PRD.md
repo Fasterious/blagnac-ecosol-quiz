@@ -13,7 +13,7 @@
 
 ### 1.1 Résumé exécutif
 
-Le Quiz EcoSol Blagnac 2026 est une application web interactive conçue pour permettre aux citoyens de Blagnac de découvrir leur niveau de compatibilité avec le programme politique d'EcoSol pour les élections municipales de 2026. L'application utilise un format de quiz moderne inspiré des applications de rencontre (style "swipe") pour rendre l'expérience engageante et virale.
+Le Quiz EcoSol Blagnac 2026 est une application web interactive conçue pour permettre aux citoyens de Blagnac de découvrir leur niveau de compatibilité avec le programme politique d'EcoSol pour les élections municipales de 2026. L'application utilise un format de quiz moderne avec interface à boutons pour rendre l'expérience engageante et virale.
 
 ### 1.2 Contexte et justification
 
@@ -26,9 +26,8 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 ### 1.3 Objectifs métier
 
 1. **Engagement citoyen** : Atteindre 1000+ utilisateurs avant les élections
-2. **Collecte de contacts** : Collecter au moins 500 emails de citoyens intéressés
-3. **Viralité** : Générer 200+ partages sur les réseaux sociaux
-4. **Awareness** : Augmenter la notoriété du programme EcoSol auprès des Blagnacais
+2. **Viralité** : Générer 200+ partages sur les réseaux sociaux
+3. **Awareness** : Augmenter la notoriété du programme EcoSol auprès des Blagnacais
 
 ---
 
@@ -85,13 +84,13 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 - ✅ Transition fluide vers le quiz
 - ✅ Responsive sur tous les appareils
 
-#### 3.1.2 Quiz interactif avec système de swipe et boutons manuels
+#### 3.1.2 Quiz interactif avec boutons de réponse
 
 **Description :**
 - Présentation de 14 questions une par une
-- Format carte avec animation de swipe (prévu pour interactions tactiles)
-- 3 options de réponse : "Pas d'accord" (gauche/orange), "Neutre" (centre/bleu), "D'accord" (droite/vert)
-- **Boutons manuels** : Interface avec boutons cliquables pour chaque option (alternative au swipe)
+- Format carte avec animations fluides
+- 3 options de réponse via boutons cliquables : "Pas d'accord" (orange), "Neutre" (bleu), "D'accord" (vert)
+- Interface tactile optimisée avec boutons de grande taille
 - Indicateur de progression en haut (numéro de question et barre de progression)
 
 **Spécifications :**
@@ -99,7 +98,7 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 - Transitions entre questions avec effets visuels (scale, fade)
 - Indicateur de progression (numéro de question X/14 et barre de progression visuelle)
 - Affichage du thème de chaque question (badge coloré selon le thème)
-- Boutons de contrôle manuels en bas de l'écran :
+- Boutons de réponse en bas de l'écran :
   - Bouton "Pas d'accord" (orange) avec icône ThumbsDown
   - Bouton "D'accord" (vert) avec icône ThumbsUp
   - Bouton "Neutre / Je ne sais pas" (bleu) avec icône Minus
@@ -107,7 +106,7 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 **Critères d'acceptation :**
 - ✅ Animation fluide sans lag
 - ✅ Responsive sur mobile et desktop
-- ✅ Boutons manuels fonctionnels
+- ✅ Boutons de réponse fonctionnels et accessibles
 - ✅ Accessible (navigation clavier possible)
 
 #### 3.1.3 Système de scoring
@@ -148,23 +147,7 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 - ✅ Effet confetti fonctionnel
 - ✅ Section détaillée des réponses consultable
 
-#### 3.1.5 Collecte d'email
-
-**Description :**
-- Formulaire d'inscription après les résultats
-- Champ email obligatoire avec validation
-- Message de confirmation après soumission
-- **Intégration Supabase** : Stockage des emails directement dans la base de données Supabase
-- Association de l'email avec la session de quiz existante
-- Fallback : création d'une nouvelle ligne si la session n'existe pas
-
-**Critères d'acceptation :**
-- ✅ Validation du format email
-- ✅ Message de confirmation visible
-- ✅ Stockage dans Supabase fonctionnel
-- ✅ Association correcte avec les résultats du quiz
-
-#### 3.1.6 Partage social
+#### 3.1.5 Partage social
 
 **Description :**
 - Bouton de partage avec texte personnalisé incluant le score
@@ -203,7 +186,6 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
   - User Agent (device_info)
   - Score final
   - Réponses complètes (array JSON)
-  - Email (optionnel, après soumission du formulaire)
 - Création d'une session au démarrage du quiz
 - Mise à jour progressive à chaque réponse
 - Synchronisation finale du score et des réponses
@@ -214,14 +196,12 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
 - `ip_address` : Adresse IP de l'utilisateur
 - `score` : Score final en pourcentage (0-100)
 - `answers` : Array JSON des réponses complètes
-- `email` : Email de l'utilisateur (optionnel)
 - `q1` à `q18` : Réponses individuelles ('agree', 'neutral', 'disagree')
 - `created_at` : Timestamp de création
 
 **Critères d'acceptation :**
 - ✅ Création de session au démarrage
 - ✅ Sauvegarde progressive des réponses
-- ✅ Collecte d'email fonctionnelle
 - ✅ Gestion des erreurs (fallback si session absente)
 
 ---
@@ -256,7 +236,6 @@ Dans le contexte des élections municipales de Blagnac 2026, EcoSol souhaite :
   currentQuestionIndex: number;
   score: number;
   answers: AnswerRecord[];
-  emailCaptured: boolean;
   sessionId?: number | null;
 }
 ```
@@ -367,13 +346,12 @@ blagnac-ecosol-quiz/
 - `currentQuestionIndex` : Index de la question actuelle (0-13)
 - `score` : Score cumulé (0-14, avec 0.5 pour neutre)
 - `answers` : Array des réponses avec questionId, value, choice
-- `emailCaptured` : Boolean indiquant si l'email a été saisi
 - `sessionId` : ID de la session Supabase (créé au démarrage du quiz)
 
 **Flux de données :**
 1. **Intro** → Création session Supabase → **Quiz**
 2. **Quiz** → Sauvegarde progressive (q1, q2, ...) → **Results**
-3. **Results** → Mise à jour email → Sauvegarde finale
+3. **Results** → Sauvegarde finale du score et des réponses
 
 ### 5.4 Performance
 
@@ -431,47 +409,35 @@ blagnac-ecosol-quiz/
 - Texte de question en gras
 - Footer avec branding
 
-**Boutons d'action :**
-- Cercle blanc avec icône
-- Effet hover et active
-- Labels textuels en dessous
+**Boutons de réponse :**
+- Format rectangulaire arrondi (rounded-2xl)
+- Fond coloré selon l'option (orange/vert/bleu)
+- Icône et label textuel intégrés
+- Effet hover et scale au clic (whileTap)
+- Disposition : 2 boutons principaux en grille + 1 bouton neutre pleine largeur
 
 **Écran de résultats :**
 - Carte blanche centrée
 - Graphique circulaire animé
-- Formulaire email intégré
-- Boutons d'action secondaires
+- Boutons d'action secondaires (partage, programme)
 
 ### 6.3 Animations
 
 **Transitions :**
-- Swipe : Translation + rotation
 - Changement de question : Scale + fade
 - Graphique : Stroke animation (1s)
 - Confetti : Particules animées
+- Boutons : Effet scale au clic (whileTap)
 
 **Timing :**
-- Swipe : 200ms delay + spring animation
+- Changement de question : 200ms delay + spring animation
 - Confetti : 300ms delay après fin du quiz
 
 ---
 
 ## 7. Intégrations futures
 
-### 7.1 Collecte d'emails
-
-**✅ Implémenté : Supabase**
-- Stockage direct dans la base de données Supabase
-- Association avec les résultats du quiz
-- Récupération possible via dashboard Supabase ou API
-- Conforme RGPD (données hébergées en UE)
-
-**Alternatives (non utilisées actuellement) :**
-- **Formspree** : Service gratuit jusqu'à 50 soumissions/mois
-- **Brevo (ex-Sendinblue)** : API REST, gestion de listes
-- **Google Sheets** : Stockage direct dans spreadsheet
-
-### 7.2 Analytics
+### 7.1 Analytics
 
 **À implémenter :**
 - Google Analytics 4
@@ -497,16 +463,13 @@ blagnac-ecosol-quiz/
 1. **Taux de complétion** : % d'utilisateurs qui finissent le quiz
    - Objectif : > 60%
 
-2. **Taux de conversion email** : % qui laissent leur email
-   - Objectif : > 40%
-
-3. **Taux de partage** : % qui partagent leur résultat
+2. **Taux de partage** : % qui partagent leur résultat
    - Objectif : > 20%
 
-4. **Temps moyen de session** : Durée moyenne du quiz
+3. **Temps moyen de session** : Durée moyenne du quiz
    - Objectif : 3-5 minutes
 
-5. **Score moyen** : Score moyen des utilisateurs
+4. **Score moyen** : Score moyen des utilisateurs
    - Objectif : 50-70% (engagement positif)
 
 ### 8.2 Métriques techniques
@@ -518,7 +481,6 @@ blagnac-ecosol-quiz/
 
 ### 8.3 Métriques business
 
-- **Emails collectés** : 500+ avant élections
 - **Partages sociaux** : 200+ avant élections
 - **Visiteurs uniques** : 1000+ avant élections
 
@@ -539,7 +501,7 @@ blagnac-ecosol-quiz/
 - **Budget** : Hébergement gratuit (Vercel)
 - **Délai** : Lancement avant campagne électorale
 - **Ressources** : Équipe limitée
-- **Conformité** : RGPD pour collecte d'emails
+- **Conformité** : RGPD pour collecte de données analytiques (IP, device_info)
 
 ### 9.3 Dépendances
 
@@ -559,11 +521,10 @@ blagnac-ecosol-quiz/
 - [x] Système de scoring avec sauvegarde progressive
 - [x] Écran de résultats avec graphique circulaire
 - [x] Section "Voir mes réponses" avec accordéon
-- [x] Formulaire email avec intégration Supabase
 - [x] Partage social (Web Share API + fallback)
-- [x] Intégration Supabase (sessions, réponses, emails)
+- [x] Intégration Supabase (sessions, réponses)
 - [x] Collecte d'IP et device_info
-- [x] Boutons de contrôle manuels
+- [x] Interface à boutons pour répondre aux questions
 - [x] Déploiement sur Vercel
 
 ### 10.2 Phase 2 : Améliorations (À planifier)
@@ -574,7 +535,6 @@ blagnac-ecosol-quiz/
 - [ ] Mode sombre
 - [ ] Dashboard admin Supabase pour visualiser les statistiques
 - [ ] Export des données (CSV/Excel) depuis Supabase
-- [ ] Notifications email automatiques (via Supabase Edge Functions)
 
 ### 10.3 Phase 3 : Features avancées (Futur)
 
@@ -625,7 +585,7 @@ Cette version 1.1 du PRD a été mise à jour après analyse complète du code s
 1. **Nombre de questions** : Corrigé de 18 à 14 questions (répartition réelle par thème)
 2. **Intégration Supabase** : Ajout d'une section complète documentant l'intégration base de données
 3. **Écran d'introduction** : Documenté l'écran d'accueil avec branding
-4. **Boutons manuels** : Documenté les contrôles manuels en plus du swipe
+4. **Boutons de réponse** : Documenté l'interface à boutons pour répondre aux questions
 5. **Section détails** : Documenté la fonctionnalité "Voir mes réponses" dans Results
 6. **Architecture** : Structure de fichiers corrigée avec tous les dossiers (components/, lib/)
 7. **Types TypeScript** : Structure des données mise à jour (QuizState, AnswerRecord)
@@ -640,6 +600,6 @@ Cette version 1.1 du PRD a été mise à jour après analyse complète du code s
 - ✅ Gestion des sessions avec ID unique
 - ✅ Fallback pour création de ligne si session absente
 - ✅ Section accordéon pour voir toutes les réponses
-- ✅ Boutons de contrôle manuels (alternative au swipe)
+- ✅ Interface à boutons pour répondre aux questions
 - ✅ Prévention du pull-to-refresh sur mobile
 

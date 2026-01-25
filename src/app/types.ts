@@ -10,7 +10,6 @@ export interface QuizState {
   currentQuestionIndex: number;
   score: number;
   answers: AnswerRecord[];
-  emailCaptured: boolean;
   sessionId?: number | null;
 }
 

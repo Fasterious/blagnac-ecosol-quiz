@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Share2, RefreshCw, Send, CheckCircle, ExternalLink, ChevronDown, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
+import { Share2, RefreshCw, CheckCircle, ExternalLink, ChevronDown, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
 import { TOTAL_QUESTIONS, questions } from '../constants';
 import confetti from 'canvas-confetti';
 import { supabase } from '../../lib/supabase';
@@ -16,8 +16,6 @@ interface ResultsProps {
 }
 
 const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers }) => {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -100,44 +98,6 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
       navigator.clipboard.writeText(`${text} ${url}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && email.includes('@')) {
-      setIsSubmitted(true);
-      
-      // Cas 1 : On a une session active, on met à jour la ligne existante
-      if (sessionId) {
-        try {
-          const { error } = await supabase
-            .from('quiz_results')
-            .update({ email: email })
-            .eq('id', sessionId);
-          
-          if (error) console.error("Erreur update email:", error);
-          else console.log("Email associé au résultat !");
-        } catch (err) {
-          console.error("Erreur update:", err);
-        }
-      } 
-      // Cas 2 (Fallback) : Pas de session (ex: coupure réseau au démarrage), on crée une nouvelle ligne
-      else {
-        try {
-          await supabase.from('quiz_results').insert([
-            { 
-              score: percentage,
-              answers: answers,
-              email: email,
-              device_info: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
-            }
-          ]);
-          console.log("Email enregistré avec nouvelle ligne (fallback)");
-        } catch(err) { 
-          console.error("Erreur fallback insert:", err);
-        }
-      }
     }
   };
 
@@ -225,40 +185,6 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
             {activeConfig.message}
           </p>
         </div>
-
-        {/* Email Capture - Compact */}
-        {!isSubmitted ? (
-          <form onSubmit={handleEmailSubmit} className="w-full mb-6 shrink-0">
-            <div className="relative flex items-center">
-              <input 
-                type="email" 
-                placeholder="Votre email pour la campagne" 
-                className="w-full pl-4 pr-12 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all text-sm font-medium"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button 
-                type="submit" 
-                className="absolute right-2 p-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors"
-              >
-                <Send size={16} />
-              </button>
-            </div>
-            <p className="text-[10px] text-gray-400 mt-2 text-center">
-              Restons en contact (désinscription possible à tout moment)
-            </p>
-          </form>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`w-full mb-8 p-3 ${activeConfig.bg} ${activeConfig.text} rounded-xl flex items-center justify-center gap-2 text-sm font-bold shrink-0`}
-          >
-            <CheckCircle size={18} />
-            <span>Bien reçu !</span>
-          </motion.div>
-        )}
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-3 w-full shrink-0">
