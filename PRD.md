@@ -535,6 +535,7 @@ blagnac-ecosol-quiz/
 - [ ] Mode sombre
 - [ ] Dashboard admin Supabase pour visualiser les statistiques
 - [ ] Export des données (CSV/Excel) depuis Supabase
+- [ ] Notifications email automatiques (via Supabase Edge Functions)
 
 ### 10.3 Phase 3 : Features avancées (Futur)
 

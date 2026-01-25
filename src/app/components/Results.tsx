@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Share2, RefreshCw, CheckCircle, ExternalLink, ChevronDown, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
+import { Share2, RefreshCw, CheckCircle, ExternalLink, ChevronDown, ThumbsUp, ThumbsDown, Minus, Mail } from 'lucide-react';
 import { TOTAL_QUESTIONS, questions } from '../constants';
 import confetti from 'canvas-confetti';
 import { supabase } from '../../lib/supabase';
@@ -187,22 +187,31 @@ const Results: React.FC<ResultsProps> = ({ score, onRestart, sessionId, answers 
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 w-full shrink-0">
-           <button 
-            onClick={handleShare}
-            className={`flex items-center justify-center gap-2 px-4 py-3.5 ${activeConfig.bg} ${activeConfig.text} border ${activeConfig.border} rounded-xl font-bold hover:brightness-95 transition-all text-sm`}
+        <div className="flex flex-col gap-3 w-full shrink-0">
+          <div className="grid grid-cols-2 gap-3 w-full">
+            <button 
+              onClick={handleShare}
+              className={`flex items-center justify-center gap-2 px-4 py-3.5 ${activeConfig.bg} ${activeConfig.text} border ${activeConfig.border} rounded-xl font-bold hover:brightness-95 transition-all text-sm`}
+            >
+              {copied ? <CheckCircle size={18} /> : <Share2 size={18} />}
+              {copied ? 'Copié !' : 'Partager'}
+            </button>
+            <a 
+              href="https://blagnac-ecosol-2026.fr/" 
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-100 text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-200 transition-all text-sm"
+            >
+              <ExternalLink size={18} />
+              Programme
+            </a>
+          </div>
+          <a 
+            href="mailto:contact@blagnac-ecosol-2026.fr" 
+            className="flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-100 text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-200 transition-all text-sm w-full"
           >
-            {copied ? <CheckCircle size={18} /> : <Share2 size={18} />}
-            {copied ? 'Copié !' : 'Partager'}
-          </button>
-           <a 
-            href="https://blagnac-ecosol-2026.fr/" 
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-100 text-gray-600 border border-gray-200 rounded-xl font-bold hover:bg-gray-200 transition-all text-sm"
-          >
-            <ExternalLink size={18} />
-            Programme
+            <Mail size={18} />
+            Contactez-nous
           </a>
         </div>
 
